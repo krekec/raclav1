@@ -1,15 +1,13 @@
 <?php
 session_start();
 
-// Redirect if not logged in
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
 
-include('povezava.php'); // Include database connection
+include('povezava.php'); 
 
-// Handle Add Worker Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_worker'])) {
     $ime = $_POST['ime'];
     $primek = $_POST['primek'];
@@ -19,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_worker'])) {
     $stmt->close();
 }
 
-// Handle Add Inventory to Skladisce Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_inventory'])) {
     $artikel = $_POST['artikel'];
     $zaloga = $_POST['zaloga'];
@@ -30,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_inventory'])) {
     $stmt->close();
 }
 
-// Handle Add Day to Finance Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_finance_day'])) {
     $zasluzek = $_POST['zasluzek'];
     $stmt = $conn->prepare("INSERT INTO finance (zasluzek) VALUES (?)");
@@ -39,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_finance_day'])) {
     $stmt->close();
 }
 
-// Fetch data for tables
 $usluzbenci_query = "SELECT * FROM usluzbenci";
 $usluzbenci_result = $conn->query($usluzbenci_query);
 
@@ -57,6 +52,7 @@ $finance_result = $conn->query($finance_query);
     <title>McManager Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/3/36/McDonald%27s_Golden_Arches.svg" type="image/icon type">
+
     <style>
         body {
             background-color: #f8f9fa;
@@ -130,7 +126,6 @@ $finance_result = $conn->query($finance_query);
 </head>
 <body>
 
-    <!-- Header Section -->
     <div class="pozdrav">
         <div class="logo-and-greeting">
             <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/McDonald%27s_Golden_Arches.svg" alt="McDonald's Logo">
@@ -139,16 +134,13 @@ $finance_result = $conn->query($finance_query);
         <a href="logout.php" class="gumb">ODJAVA</a>
     </div>
 
-    <!-- Navigation Buttons -->
     <div class="nav-buttons">
         <button onclick="showTable('usluzbenci')">Uslužbenci</button>
         <button onclick="showTable('skladisce')">Skladišče</button>
         <button onclick="showTable('finance')">Finance</button>
     </div>
 
-    <!-- Tables and Forms Section -->
     <div class="container">
-        <!-- Uslužbenci Table and Form -->
         <div id="usluzbenci" class="data-table active">
             <h2>Uslužbenci</h2>
             <table class="table table-bordered">
@@ -170,7 +162,6 @@ $finance_result = $conn->query($finance_query);
                 </tbody>
             </table>
 
-            <!-- Add Worker Form -->
             <div class="form-container">
                 <h4>Dodaj Uslužbenca</h4>
                 <form method="POST">
@@ -187,7 +178,6 @@ $finance_result = $conn->query($finance_query);
             </div>
         </div>
 
-        <!-- Skladišče Table and Form -->
         <div id="skladisce" class="data-table">
             <h2>Skladišče</h2>
             <table class="table table-bordered">
@@ -211,7 +201,6 @@ $finance_result = $conn->query($finance_query);
                 </tbody>
             </table>
 
-            <!-- Add Inventory Form -->
             <div class="form-container">
                 <h4>Dodaj Inventar</h4>
                 <form method="POST">
@@ -232,7 +221,6 @@ $finance_result = $conn->query($finance_query);
             </div>
         </div>
 
-        <!-- Finance Table and Form -->
         <div id="finance" class="data-table">
             <h2>Finance</h2>
             <table class="table table-bordered">
@@ -252,7 +240,6 @@ $finance_result = $conn->query($finance_query);
                 </tbody>
             </table>
 
-            <!-- Add Finance Day Form -->
             <div class="form-container">
                 <h4>Dodaj Dan v Finance</h4>
                 <form method="POST">
