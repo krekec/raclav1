@@ -2,8 +2,7 @@
 session_start();
 include("povezava.php");
 
-$error = ""; // Variable to hold error messages
-
+$error = ""; 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -37,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <style>
         body {
-            background-color: #f8f9fa; /* Light background for better contrast */
+            background-color: #f8f9fa; 
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
@@ -50,13 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-radius: 10px;
             width: 400px;
             padding: 30px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
             text-align: center;
         }
   
         
         .gumb {
-            background-color: #ffc107; /* Yellow button */
+            background-color: #ffc107; 
             border: none;
             color: #333333;
             font-size: 16px;
@@ -66,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             width: 100%;
         }
         .gumb:hover {
-            background-color: #e0a800; /* Slightly darker yellow on hover */
+            background-color: #e0a800; 
         }
     </style>
 </head>
