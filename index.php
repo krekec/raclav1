@@ -56,6 +56,7 @@ $finance_result = $conn->query($finance_query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>McManager Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/3/36/McDonald%27s_Golden_Arches.svg" type="image/icon type">
     <style>
         body {
             background-color: #f8f9fa;
