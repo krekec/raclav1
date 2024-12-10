@@ -11,6 +11,8 @@ include('povezava.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_worker'])) {
     $ime = $_POST['ime'];
     $primek = $_POST['primek'];
+    $sql = "INSERT INTO usluzbenci (ime, primek) VALUES ('$ime', '$primek')";
+    $conn->query($sql);
    
 }
 
@@ -18,11 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_inventory'])) {
     $artikel = $_POST['artikel'];
     $zaloga = $_POST['zaloga'];
     $mesecna_poraba = $_POST['mesecna_poraba'];
+    $sql = "INSERT INTO skladisce (artikel, zaloga, mesecna_poraba) VALUES ('$artikel', $zaloga, $mesecna_poraba)";
+    $conn->query($sql);
   
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_finance_day'])) {
     $zasluzek = $_POST['zasluzek'];
+    $sql = "INSERT INTO usluzbenci (ime, primek) VALUES ('$ime', '$primek')";
+    $sql = "INSERT INTO finance (zasluzek) VALUES ($zasluzek)";
+    $conn->query($sql);
+
 
 }
 
@@ -122,7 +130,7 @@ $finance_result = $conn->query($finance_query);
             <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/McDonald%27s_Golden_Arches.svg" alt="McDonald's Logo">
             <p class="greeting">Pozdravljen, <?php echo htmlspecialchars($_SESSION['username']); ?></p>
         </div>
-        <a href="logout.php" class="gumb">ODJAVA</a>
+        <a href="prijava.php" class="gumb">ODJAVA</a>
     </div>
 
     <div class="nav-buttons">
