@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
+    header("Location: prijava.php");
     exit();
 }
 
@@ -11,28 +11,19 @@ include('povezava.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_worker'])) {
     $ime = $_POST['ime'];
     $primek = $_POST['primek'];
-    $stmt = $conn->prepare("INSERT INTO usluzbenci (ime, primek) VALUES (?, ?)");
-    $stmt->bind_param("ss", $ime, $primek);
-    $stmt->execute();
-    $stmt->close();
+   
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_inventory'])) {
     $artikel = $_POST['artikel'];
     $zaloga = $_POST['zaloga'];
     $mesecna_poraba = $_POST['mesecna_poraba'];
-    $stmt = $conn->prepare("INSERT INTO skladisce (artikel, zaloga, mesecna_poraba) VALUES (?, ?, ?)");
-    $stmt->bind_param("sii", $artikel, $zaloga, $mesecna_poraba);
-    $stmt->execute();
-    $stmt->close();
+  
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_finance_day'])) {
     $zasluzek = $_POST['zasluzek'];
-    $stmt = $conn->prepare("INSERT INTO finance (zasluzek) VALUES (?)");
-    $stmt->bind_param("i", $zasluzek);
-    $stmt->execute();
-    $stmt->close();
+
 }
 
 $usluzbenci_query = "SELECT * FROM usluzbenci";
