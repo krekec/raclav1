@@ -8,12 +8,13 @@ if (!isset($_SESSION['username'])) {
 
 include('povezava.php'); 
 
+$activeTab = isset($_GET['view']) ? $_GET['view'] : 'usluzbenci';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_worker'])) {
     $ime = $_POST['ime'];
     $primek = $_POST['primek'];
     $sql = "INSERT INTO usluzbenci (ime, primek) VALUES ('$ime', '$primek')";
     $conn->query($sql);
-   
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_inventory'])) {
@@ -22,16 +23,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_inventory'])) {
     $mesecna_poraba = $_POST['mesecna_poraba'];
     $sql = "INSERT INTO skladisce (artikel, zaloga, mesecna_poraba) VALUES ('$artikel', $zaloga, $mesecna_poraba)";
     $conn->query($sql);
-  
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_finance_day'])) {
     $zasluzek = $_POST['zasluzek'];
-    $sql = "INSERT INTO usluzbenci (ime, primek) VALUES ('$ime', '$primek')";
     $sql = "INSERT INTO finance (zasluzek) VALUES ($zasluzek)";
     $conn->query($sql);
+}
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_poraba'])) {
+    $artikel_id = (int)$_POST['artikel_id'];
+    $change = (int)$_POST['change']; /
+    $sql = "UPDATE skladisce SET mesecna_poraba = mesecna_poraba + ($change) WHERE artikel_id = $artikel_id";
+    $conn->query($sql);
+}
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_zaloga'])) {
+    $artikel_id = (int)$_POST['artikel_id'];
+    $change = (int)$_POST['change'];
+    $sql = "UPDATE skladisce SET zaloga = zaloga + ($change) WHERE artikel_id = $artikel_id";
+    $conn->query($sql);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_artikel'])) {
+    $artikel_id = (int)$_POST['artikel_id'];
+    $sql = "DELETE FROM skladisce WHERE artikel_id = $artikel_id";
+    $conn->query($sql);
 }
 
 $usluzbenci_query = "SELECT * FROM usluzbenci";
@@ -51,7 +68,6 @@ $finance_result = $conn->query($finance_query);
     <title>McManager Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/3/36/McDonald%27s_Golden_Arches.svg" type="image/icon type">
-
     <style>
         body {
             background-color: #f8f9fa;
@@ -121,6 +137,17 @@ $finance_result = $conn->query($finance_query);
         .form-container h4 {
             margin-bottom: 20px;
         }
+        .adjust-buttons form {
+            display: inline;
+        }
+        .adjust-buttons form button {
+            display: inline-block;
+            margin: 0 5px;
+            padding: 2px 6px;
+        }
+        .delete-button form {
+            display: inline;
+        }
     </style>
 </head>
 <body>
@@ -140,7 +167,7 @@ $finance_result = $conn->query($finance_query);
     </div>
 
     <div class="container">
-        <div id="usluzbenci" class="data-table active">
+        <div id="usluzbenci" class="data-table">
             <h2>Uslužbenci</h2>
             <table class="table table-bordered">
                 <thead>
@@ -151,7 +178,9 @@ $finance_result = $conn->query($finance_query);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = $usluzbenci_result->fetch_assoc()): ?>
+                    <?php 
+                    $usluzbenci_result->data_seek(0);
+                    while ($row = $usluzbenci_result->fetch_assoc()): ?>
                         <tr>
                             <td><?php echo $row['id']; ?></td>
                             <td><?php echo $row['ime']; ?></td>
@@ -163,7 +192,7 @@ $finance_result = $conn->query($finance_query);
 
             <div class="form-container">
                 <h4>Dodaj Uslužbenca</h4>
-                <form method="POST">
+                <form method="POST" action="?view=usluzbenci">
                     <div class="mb-3">
                         <label for="ime" class="form-label">Ime</label>
                         <input type="text" name="ime" class="form-control" required>
@@ -186,15 +215,48 @@ $finance_result = $conn->query($finance_query);
                         <th>Artikel</th>
                         <th>Zaloga</th>
                         <th>Mesečna Poraba</th>
+                        <th>Izbriši</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = $skladisce_result->fetch_assoc()): ?>
+                    <?php 
+                    $skladisce_result = $conn->query($skladisce_query);
+                    while ($row = $skladisce_result->fetch_assoc()): ?>
                         <tr>
                             <td><?php echo $row['artikel_id']; ?></td>
                             <td><?php echo $row['artikel']; ?></td>
-                            <td><?php echo $row['zaloga']; ?></td>
-                            <td><?php echo $row['mesecna_poraba']; ?></td>
+                            <td class="adjust-buttons">
+                                <form method="POST" action="?view=skladisce" style="display:inline;">
+                                    <input type="hidden" name="artikel_id" value="<?php echo $row['artikel_id']; ?>">
+                                    <input type="hidden" name="change" value="-1">
+                                    <button type="submit" name="update_zaloga" class="btn btn-sm btn-danger">-</button>
+                                </form>
+                                <?php echo $row['zaloga']; ?>
+                                <form method="POST" action="?view=skladisce" style="display:inline;">
+                                    <input type="hidden" name="artikel_id" value="<?php echo $row['artikel_id']; ?>">
+                                    <input type="hidden" name="change" value="1">
+                                    <button type="submit" name="update_zaloga" class="btn btn-sm btn-success">+</button>
+                                </form>
+                            </td>
+                            <td class="adjust-buttons">
+                                <form method="POST" action="?view=skladisce" style="display:inline;">
+                                    <input type="hidden" name="artikel_id" value="<?php echo $row['artikel_id']; ?>">
+                                    <input type="hidden" name="change" value="-1">
+                                    <button type="submit" name="update_poraba" class="btn btn-sm btn-danger">-</button>
+                                </form>
+                                <?php echo $row['mesecna_poraba']; ?>
+                                <form method="POST" action="?view=skladisce" style="display:inline;">
+                                    <input type="hidden" name="artikel_id" value="<?php echo $row['artikel_id']; ?>">
+                                    <input type="hidden" name="change" value="1">
+                                    <button type="submit" name="update_poraba" class="btn btn-sm btn-success">+</button>
+                                </form>
+                            </td>
+                            <td class="delete-button">
+                                <form method="POST" action="?view=skladisce" style="display:inline;">
+                                    <input type="hidden" name="artikel_id" value="<?php echo $row['artikel_id']; ?>">
+                                    <button type="submit" name="delete_artikel" class="btn btn-sm btn-danger">Izbriši</button>
+                                </form>
+                            </td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
@@ -202,7 +264,7 @@ $finance_result = $conn->query($finance_query);
 
             <div class="form-container">
                 <h4>Dodaj Inventar</h4>
-                <form method="POST">
+                <form method="POST" action="?view=skladisce">
                     <div class="mb-3">
                         <label for="artikel" class="form-label">Artikel</label>
                         <input type="text" name="artikel" class="form-control" required>
@@ -230,7 +292,9 @@ $finance_result = $conn->query($finance_query);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = $finance_result->fetch_assoc()): ?>
+                    <?php 
+                    $finance_result->data_seek(0);
+                    while ($row = $finance_result->fetch_assoc()): ?>
                         <tr>
                             <td><?php echo $row['dan_id']; ?></td>
                             <td><?php echo $row['zasluzek']; ?></td>
@@ -241,7 +305,7 @@ $finance_result = $conn->query($finance_query);
 
             <div class="form-container">
                 <h4>Dodaj Dan v Finance</h4>
-                <form method="POST">
+                <form method="POST" action="?view=finance">
                     <div class="mb-3">
                         <label for="zasluzek" class="form-label">Zaslužek (€)</label>
                         <input type="number" name="zasluzek" class="form-control" required>
@@ -257,6 +321,10 @@ $finance_result = $conn->query($finance_query);
             document.querySelectorAll('.data-table').forEach(table => table.classList.remove('active'));
             document.getElementById(tableId).classList.add('active');
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            showTable('<?php echo $activeTab; ?>');
+        });
     </script>
 </body>
 </html>
